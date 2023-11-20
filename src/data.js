@@ -35,6 +35,10 @@ export class Product {
       return this.productList;
    };
 
+   static getListNames = () => {
+      return this.list.map((obj) => obj.name);
+   };
+
    static getList = () => {
       return this.list;
    };

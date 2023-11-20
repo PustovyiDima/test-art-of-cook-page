@@ -2,27 +2,76 @@ import "./index.css";
 import { useClickAway } from "react-use";
 import { useReducer, useRef, useState } from "react";
 import { Squash as Hamburger } from "hamburger-react";
+import { Product } from "../../data";
+
+enum MOBILE_HEADER_ACTION_TYPE {
+   CHANGE_PAGE = "CHANGE_PAGE",
+   RETURN = "RETURN",
+   REMOVE = "REMOVE",
+}
+
+enum MOBILE_HEADER_PAGE_TYPE {
+   MAIN = "main",
+   TITLE = "title",
+   SUBTITLE = "subtitle",
+   DATA = "data",
+}
 
 type State = {
    currentPage: string | undefined;
+   prevPage: string | undefined;
+   datalist: any[];
+   pageTitle?: string;
 };
 
 type Action = {
-   type: ACTION_TYPE;
-   payload: string | undefined;
+   type: MOBILE_HEADER_ACTION_TYPE;
+   payload?: MOBILE_HEADER_PAGE_TYPE;
+   datalist?: any[];
+   pageTitle?: string;
 };
-
-enum ACTION_TYPE {
-   CHANGE_PAGE = "CHANGE_PAGE",
-}
 
 const setMenuComponentReducer: React.Reducer<State, Action> = (
    state: State,
    action: Action
 ): State => {
+   let page;
+   let dataList: any[] = [];
+   if (action.datalist) {
+      dataList = action.datalist;
+   }
+
    switch (action.type) {
-      case ACTION_TYPE.CHANGE_PAGE:
-         return { ...state, currentPage: action.payload };
+      case MOBILE_HEADER_ACTION_TYPE.CHANGE_PAGE:
+         if (action.payload === MOBILE_HEADER_PAGE_TYPE.TITLE) {
+            page = MOBILE_HEADER_PAGE_TYPE.MAIN;
+         } else if (
+            action.payload === MOBILE_HEADER_PAGE_TYPE.SUBTITLE &&
+            state.currentPage === MOBILE_HEADER_PAGE_TYPE.TITLE
+         ) {
+            page = MOBILE_HEADER_PAGE_TYPE.TITLE;
+         }
+
+         let title = "";
+         if (action.pageTitle) {
+            title = action.pageTitle;
+         }
+
+         return {
+            ...state,
+            currentPage: action.payload,
+            prevPage: page,
+            pageTitle: title,
+            datalist: dataList,
+         };
+      case MOBILE_HEADER_ACTION_TYPE.REMOVE:
+         return {
+            ...state,
+            currentPage: MOBILE_HEADER_PAGE_TYPE.MAIN,
+            prevPage: MOBILE_HEADER_PAGE_TYPE.MAIN,
+            pageTitle: "",
+            datalist: [],
+         };
       default:
          return state;
    }
@@ -34,11 +83,14 @@ export const HeaderMobile = () => {
 
    useClickAway(ref, () => {
       setOpen(false);
-      dispachMenuState({ type: ACTION_TYPE.CHANGE_PAGE, payload: "main" });
+      dispachMenuState({ type: MOBILE_HEADER_ACTION_TYPE.REMOVE });
    });
 
    const [menuState, dispachMenuState] = useReducer(setMenuComponentReducer, {
-      currentPage: "main",
+      currentPage: MOBILE_HEADER_PAGE_TYPE.MAIN,
+      prevPage: MOBILE_HEADER_PAGE_TYPE.MAIN,
+      pageTitle: "",
+      datalist: [],
    });
 
    return (
@@ -53,11 +105,51 @@ export const HeaderMobile = () => {
 
             {isOpen && (
                <div className="header--mobile__container">
-                  {menuState.currentPage === "main" && (
+                  {menuState.currentPage === MOBILE_HEADER_PAGE_TYPE.MAIN && (
                      <div ref={ref} className="header--mobile__menu__container">
-                        {/* title */}
-                        {/* subtitle */}
                         {/* menu */}
+                        <button
+                           onClick={() => {
+                              dispachMenuState({
+                                 type: MOBILE_HEADER_ACTION_TYPE.CHANGE_PAGE,
+                                 payload: MOBILE_HEADER_PAGE_TYPE.TITLE,
+                                 datalist: Product.getList(),
+                                 pageTitle: "Меню каталога",
+                              });
+                           }}
+                        ></button>
+                     </div>
+                  )}
+                  {menuState.currentPage === MOBILE_HEADER_PAGE_TYPE.TITLE && (
+                     <div ref={ref} className="header--mobile__menu__container">
+                        <div>{menuState.pageTitle}</div>
+                        {menuState.datalist.length > 0 &&
+                           menuState.datalist.map((item) => (
+                              <div
+                                 onClick={() => {
+                                    dispachMenuState({
+                                       type: MOBILE_HEADER_ACTION_TYPE.CHANGE_PAGE,
+                                       payload:
+                                          MOBILE_HEADER_PAGE_TYPE.SUBTITLE,
+                                       datalist: item.sublist,
+                                       pageTitle: item.name,
+                                    });
+                                 }}
+                              >
+                                 {item.name}
+                              </div>
+                           ))}
+                     </div>
+                  )}
+                  {menuState.currentPage ===
+                     MOBILE_HEADER_PAGE_TYPE.SUBTITLE && (
+                     <div ref={ref} className="header--mobile__menu__container">
+                        <div>{menuState.pageTitle}</div>
+                     </div>
+                  )}
+                  {menuState.currentPage === MOBILE_HEADER_PAGE_TYPE.DATA && (
+                     <div ref={ref} className="header--mobile__menu__container">
+                        <div>{menuState.pageTitle}</div>
                      </div>
                   )}
 
@@ -72,6 +164,9 @@ export const HeaderMobile = () => {
                         className="close__btn"
                         onClick={() => {
                            setOpen(false);
+                           dispachMenuState({
+                              type: MOBILE_HEADER_ACTION_TYPE.REMOVE,
+                           });
                         }}
                      >
                         <img src="/closed.svg" width={32} height={32} alt=" " />
