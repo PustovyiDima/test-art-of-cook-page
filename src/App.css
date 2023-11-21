@@ -8,3 +8,7 @@
 }
 
 /*  var(--main-bg-color) */
+
+.flex {
+   display: flex;
+}

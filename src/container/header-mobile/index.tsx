@@ -50,9 +50,15 @@ const setMenuComponentReducer: React.Reducer<State, Action> = (
             state.currentPage === MOBILE_HEADER_PAGE_TYPE.TITLE
          ) {
             page = MOBILE_HEADER_PAGE_TYPE.TITLE;
+         } else if (
+            action.payload === MOBILE_HEADER_PAGE_TYPE.DATA &&
+            state.currentPage === MOBILE_HEADER_PAGE_TYPE.SUBTITLE
+         ) {
+            page = state.pageTitle;
          }
 
-         let title = "";
+         let title = state.pageTitle;
+
          if (action.pageTitle) {
             title = action.pageTitle;
          }
@@ -105,61 +111,146 @@ export const HeaderMobile = () => {
 
             {isOpen && (
                <div className="header--mobile__container">
-                  {menuState.currentPage === MOBILE_HEADER_PAGE_TYPE.MAIN && (
-                     <div ref={ref} className="header--mobile__menu__container">
-                        {/* menu */}
-                        <button
-                           onClick={() => {
-                              dispachMenuState({
-                                 type: MOBILE_HEADER_ACTION_TYPE.CHANGE_PAGE,
-                                 payload: MOBILE_HEADER_PAGE_TYPE.TITLE,
-                                 datalist: Product.getList(),
-                                 pageTitle: "Меню каталога",
-                              });
-                           }}
-                        ></button>
-                     </div>
-                  )}
-                  {menuState.currentPage === MOBILE_HEADER_PAGE_TYPE.TITLE && (
-                     <div ref={ref} className="header--mobile__menu__container">
-                        <div>{menuState.pageTitle}</div>
-                        {menuState.datalist.length > 0 &&
-                           menuState.datalist.map((item) => (
+                  <div className="header--mobile__menu__container">
+                     {menuState.currentPage ===
+                        MOBILE_HEADER_PAGE_TYPE.MAIN && (
+                        <div ref={ref} className="header--mobile__menu">
+                           {/* menu */}
+                           <button
+                              onClick={() => {
+                                 dispachMenuState({
+                                    type: MOBILE_HEADER_ACTION_TYPE.CHANGE_PAGE,
+                                    payload: MOBILE_HEADER_PAGE_TYPE.TITLE,
+                                    datalist: Product.getList(),
+                                    pageTitle: "Меню каталога",
+                                 });
+                              }}
+                           ></button>
+                        </div>
+                     )}
+                     {menuState.currentPage ===
+                        MOBILE_HEADER_PAGE_TYPE.TITLE && (
+                        <div ref={ref} className="header--mobile__menu">
+                           <div className="menu-page__title--component flex">
                               <div
+                                 className="backbtn flex"
+                                 onClick={() => {
+                                    dispachMenuState({
+                                       type: MOBILE_HEADER_ACTION_TYPE.REMOVE,
+                                    });
+                                 }}
+                              >
+                                 <div className="arrow--reverse "></div>
+                                 <span>Назад</span>
+                              </div>
+                              <span className="menu-page__title">
+                                 {menuState.pageTitle}
+                              </span>
+                           </div>
+                           {menuState.datalist.length > 0 &&
+                              menuState.datalist.map((item) => (
+                                 <div
+                                    className="nav-list--item"
+                                    onClick={() => {
+                                       dispachMenuState({
+                                          type: MOBILE_HEADER_ACTION_TYPE.CHANGE_PAGE,
+                                          payload:
+                                             MOBILE_HEADER_PAGE_TYPE.SUBTITLE,
+                                          datalist: item.sublist,
+                                          pageTitle: item.name,
+                                       });
+                                    }}
+                                 >
+                                    <span> {item.name}</span>
+                                    <div className="arrow"></div>
+                                 </div>
+                              ))}
+                        </div>
+                     )}
+                     {menuState.currentPage ===
+                        MOBILE_HEADER_PAGE_TYPE.SUBTITLE && (
+                        <div ref={ref} className="header--mobile__menu">
+                           <div className="menu-page__title--component flex">
+                              <div
+                                 className="backbtn flex"
+                                 onClick={() => {
+                                    dispachMenuState({
+                                       type: MOBILE_HEADER_ACTION_TYPE.CHANGE_PAGE,
+                                       payload: MOBILE_HEADER_PAGE_TYPE.TITLE,
+                                       datalist: Product.getList(),
+                                       pageTitle: "Меню каталога",
+                                    });
+                                 }}
+                              >
+                                 <div className="arrow--reverse "></div>
+                                 <span>Назад</span>
+                              </div>
+                              <span className="menu-page__title">
+                                 {menuState.pageTitle}
+                              </span>
+                           </div>
+                           {menuState.datalist.length > 0 &&
+                              menuState.datalist.map((item) => (
+                                 <div
+                                    className="nav-list--item"
+                                    onClick={() => {
+                                       dispachMenuState({
+                                          type: MOBILE_HEADER_ACTION_TYPE.CHANGE_PAGE,
+                                          payload: MOBILE_HEADER_PAGE_TYPE.DATA,
+                                          datalist: item,
+                                          pageTitle: item,
+                                       });
+                                    }}
+                                 >
+                                    <span> {item}</span>
+                                    {/* <img
+                                    src="/icons/chevron.svg"
+                                    alt=""
+                                    width={15}
+                                    height={15}
+                                    style={{ transform: "rotate(-90deg)" }}
+                                 /> */}
+                                    <div className="arrow"></div>
+                                 </div>
+                              ))}
+                        </div>
+                     )}
+                     {menuState.currentPage ===
+                        MOBILE_HEADER_PAGE_TYPE.DATA && (
+                        <div ref={ref} className="header--mobile__menu">
+                           <div className="menu-page__title--component flex">
+                              <div
+                                 className="backbtn flex"
                                  onClick={() => {
                                     dispachMenuState({
                                        type: MOBILE_HEADER_ACTION_TYPE.CHANGE_PAGE,
                                        payload:
                                           MOBILE_HEADER_PAGE_TYPE.SUBTITLE,
-                                       datalist: item.sublist,
-                                       pageTitle: item.name,
+                                       datalist: Product.getSubList(
+                                          menuState.prevPage
+                                       ),
+                                       pageTitle: menuState.prevPage,
                                     });
                                  }}
                               >
-                                 {item.name}
+                                 <div className="arrow--reverse "></div>
+                                 <span>Назад</span>
                               </div>
-                           ))}
-                     </div>
-                  )}
-                  {menuState.currentPage ===
-                     MOBILE_HEADER_PAGE_TYPE.SUBTITLE && (
-                     <div ref={ref} className="header--mobile__menu__container">
-                        <div>{menuState.pageTitle}</div>
-                     </div>
-                  )}
-                  {menuState.currentPage === MOBILE_HEADER_PAGE_TYPE.DATA && (
-                     <div ref={ref} className="header--mobile__menu__container">
-                        <div>{menuState.pageTitle}</div>
-                     </div>
-                  )}
-
-                  <div className="close--btn__component">
+                              <span className="menu-page__title">
+                                 {menuState.pageTitle}
+                              </span>
+                           </div>
+                        </div>
+                     )}
                      <img
+                        className="menu-vector "
                         src="/Vector1.svg"
                         width={17.5}
                         height={47.21}
                         alt=" "
                      />
+                  </div>
+                  <div className="close--btn__component">
                      <div
                         className="close__btn"
                         onClick={() => {
