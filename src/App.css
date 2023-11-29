@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:wght@300;400;500;700&display=swap");
+
 :root {
    --Black: #000;
    --Dark: #333538;
@@ -5,10 +7,97 @@
    --Gray: #e8e8e8;
    --Gray-light: #f6f6f6;
    --Red: #d4302b;
+   --White: #fff;
 }
 
 /*  var(--main-bg-color) */
 
 .flex {
    display: flex;
+}
+
+* {
+   /* Foreground, Background */
+   scrollbar-color: #999 #333;
+}
+*::-webkit-scrollbar {
+   width: 3px; /* Mostly for vertical scrollbars */
+   height: 3px; /* Mostly for horizontal scrollbars */
+}
+*::-webkit-scrollbar-thumb {
+   /* Foreground */
+   background: #999;
+}
+*::-webkit-scrollbar-track {
+   /* Background */
+   background: transparent;
+}
+
+* {
+   box-sizing: border-box;
+}
+
+.text-content {
+   color: var(--Black, #000);
+
+   /* Desktop Content Text/P light 15 px */
+   font-family: "Roboto", sans-serif;
+   font-size: 15px;
+   font-style: normal;
+   font-weight: 300;
+   line-height: 20px; /* 133.333% */
+}
+
+.text-content--400 {
+   font-weight: 400;
+}
+.text-content--600 {
+   font-weight: 600;
+}
+.text-content--small {
+   font-size: 13px;
+}
+
+.text-content--white {
+   color: var(--White);
+}
+
+.h5-bold {
+   font-family: "IBM Plex Sans";
+   font-size: 17px;
+   font-style: normal;
+   font-weight: 600;
+   line-height: 20px;
+   color: var(--Black, #000);
+}
+
+.grid-10 {
+   display: grid;
+   gap: 10px;
+}
+
+.text--active {
+   color: var(--Red);
+}
+
+.flex {
+   display: flex;
+}
+.center {
+   align-items: center;
+}
+.g-1 {
+   gap: 6px;
+}
+.g-2 {
+   gap: 10px;
+}
+.g-3 {
+   gap: 20px;
+}
+.g-4 {
+   gap: 28px;
+}
+.g-5 {
+   gap: 36px;
 }

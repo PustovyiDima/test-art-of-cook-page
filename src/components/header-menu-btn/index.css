@@ -1,0 +1,19 @@
+.menuButton {
+   display: flex;
+   padding: 14px 20px;
+   align-items: center;
+   text-transform: uppercase;
+   gap: 16px;
+   align-self: stretch;
+   border-radius: 10px;
+   color: var(--Black, #000);
+   border: 1px solid var(--Gray-dark, #9c9c9c);
+   cursor: pointer;
+   /* width: 100%; */
+   /* height: 50px; */
+}
+
+.menuButton--active {
+   background: var(--Red, #d4302b);
+   color: var(--White, #fff);
+}
